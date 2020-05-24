@@ -22,6 +22,8 @@ const postUpdate = () => {
 const showSettings = () => {
     getById('settingsDialog').style.display='block';
     getById('settingsBtn').disabled = true;
+    getById('team').value = localStorage.getItem('team');
+    getById('name').value = localStorage.getItem('name');
 }
 
 const sendUpdate = async (payload) => {
@@ -80,17 +82,21 @@ const saveSettings = () => {
     }
     localStorage.setItem('team', team);
     localStorage.setItem('name', name);
-    getById('titleDiv').innerHTML = "Jester :: " + team;
+    updateTitle(team, name);
     getById('settingsDialog').style.display = 'none';
     getById('updateBtn').disabled = false;
     pullStatus();
 }
 
+const updateTitle = (team, name) => {
+    getById('titleDiv').innerHTML = "Jester :: " + team + " :: " + name;
+}
 
 
 if (!localStorage.getItem('team') || !localStorage.getItem('name')) {
     getById('updateBtn').disabled = true;
+    showSettings();
 } else {
-    getById('titleDiv').innerHTML = "Jester :: " + localStorage.getItem('team');
+    updateTitle(localStorage.getItem('team'), localStorage.getItem('name'));
     pullStatus();
 }
