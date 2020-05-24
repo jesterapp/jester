@@ -85,6 +85,7 @@ const saveSettings = () => {
     updateTitle(team, name);
     getById('settingsDialog').style.display = 'none';
     getById('updateBtn').disabled = false;
+    getById('settingsBtn').disabled = false;
     pullStatus();
 }
 
