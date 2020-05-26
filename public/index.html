@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="stylesheets/custom-css-bootstrap-magic-2020-05-11.css"/>
+    <link rel="stylesheet" href="stylesheets/custom-css-bootstrap-magic-2020-05-11.css" />
     <link rel="stylesheet" href="stylesheets/index.css" />
     <title>Jester</title>
 </head>
@@ -17,13 +17,13 @@
         </a>
     </nav>
     <div class="content">
-        <div id="status">
-            No Status Found
+        <div id="localStatus">
+            
         </div>
         <div id="settingsDialog" class="updateModal">
             <div class="form-group">
                 <label for="teamname">Team Name</label>
-                <input type="text" id="team"  class="form-control"/>
+                <input type="text" id="team" class="form-control" />
             </div>
             <div class="form-group">
                 <label>Your Name</label>
@@ -33,15 +33,15 @@
         </div>
         <div id="updateDialog" class="updateModal">
             <div class="form-group">
-                <label for="yesterday">What did you do yesterday?</label>
+                <label for="yesterdayLabel">What did you do yesterday?</label>
                 <textarea id="yesterday" class="form-control" rows="2"></textarea>
             </div>
             <div class="form-group">
-                <label for="today">What is your plan for today?</label>
+                <label for="todayLabel">What is your plan for today?</label>
                 <textarea id="today" class="form-control" rows="2"></textarea>
             </div>
             <div class="form-group">
-                <label for="blockers">Do you have blockers?</label>
+                <label for="blockersLabel">Do you have blockers?</label>
                 <textarea id="blockers" class="form-control" rows="2"></textarea>
             </div>
             <button onclick="postUpdate()" class="btn btn-primary">Update</button>

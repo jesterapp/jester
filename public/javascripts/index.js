@@ -1,4 +1,3 @@
-
 const getById = (id) => {
     return document.getElementById(id);
 }
@@ -27,10 +26,22 @@ const showSettings = () => {
 }
 
 const sendUpdate = async (payload) => {
-    //success
-    clearFields();
-    getById('updateBtn').style.display = 'block';
-    getById('updateDialog').style.display = 'none';
+
+    try {
+        const resp = await fetch('/status', {
+            'method':'POST',
+            'headers': {
+                'Content-Type':'application/json'
+            },
+            'body': JSON.stringify(payload)
+        })
+        clearFields();
+        getById('updateBtn').style.display = 'block';
+        getById('updateDialog').style.display = 'none';
+        pullStatus();
+    } catch(error) {
+        alert(error);
+    }
 }
 
 const cancelUpdate = () => {
@@ -60,17 +71,37 @@ const showAddUpdate = () => {
 }
 
 const pullStatus = async () => {
-    const url = "/status/" + localStorage.getItem('team');
-    console.log('pulling status: ' + url);
+    let uri = "/status/" + localStorage.getItem('team') + '/' + localStorage.getItem('name');
     try {
-        const resp = await fetch(url, {'method':'GET'});
+        const resp = await fetch(uri, {'method':'GET'});
         if (!resp.ok) {
             alert('A problem has occurred pulling status. Try refreshing the page in a few minutes.');
             return;
         }
+        const json = await resp.json();
+        updateLocalStatus(json.status);
     } catch(error) {
-
+        alert(error);
     }
+}
+
+const updateLocalStatus = (status) => {
+    let statusHtml = `
+        <div class="card" style="width: 18rem;">
+        <div class="card-header" id="statusName">{NAME}<br/>{TEAM}</div>
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item" id="statusYesterday">{YESTERDAY}</li>
+        <li class="list-group-item" id="statusToday">{TODAY}</li>
+        <li class="list-group-item" id="statusBlockers">{BLOCKERS}</li>
+    </ul>
+</div>
+    `;
+    statusHtml = statusHtml.replace('{NAME}', status.name);
+    statusHtml = statusHtml.replace('{TEAM}', status.team);
+    statusHtml = statusHtml.replace('{YESTERDAY}', '<b>Yesterday</b><hr/>' + status.yesterday);
+    statusHtml = statusHtml.replace('{TODAY}', '<b>Today</b><hr/>' + status.today);
+    statusHtml = statusHtml.replace('{BLOCKERS}', '<b>Blockers</b><hr/>' + status.blockers);
+    getById('localStatus').innerHTML = statusHtml;
 }
 
 const saveSettings = () => {
@@ -93,6 +124,24 @@ const updateTitle = (team, name) => {
     getById('titleDiv').innerHTML = "Jester :: " + team + " :: " + name;
 }
 
+const pollOthers = async () => {
+    console.log('polling: ' + new Date());
+    try {
+        const resp = await fetch('/status/others', {
+            'method':'GET',
+            'headers': {
+                'Content-Type':'application/json'
+            }
+        });
+        if (!resp.ok) { 
+            alert('error ' + resp.status);
+            return;
+        }
+    } catch (error) {
+        alert(error);
+    }
+}
+
 
 if (!localStorage.getItem('team') || !localStorage.getItem('name')) {
     getById('updateBtn').disabled = true;
@@ -101,3 +150,8 @@ if (!localStorage.getItem('team') || !localStorage.getItem('name')) {
     updateTitle(localStorage.getItem('team'), localStorage.getItem('name'));
     pullStatus();
 }
+
+pollOthers();
+setInterval(() => {
+    pollOthers();
+}, 60000);
